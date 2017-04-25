@@ -11,7 +11,7 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :domain, 'ruby.oporaua.org'
-set :deploy_to, '/home/scraper_lviv_voted/'
+set :deploy_to, '/home/scraper_lviv_voted'
 set :repository, 'git@github.com:OPORA/scraper_lviv_voted.git'
 set :branch, 'master'
 
@@ -35,7 +35,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  # invoke :'rvm:use[ruby-1.9.3-p125@default]'
+  invoke :'rvm:use[ruby-2.2.0@default]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.

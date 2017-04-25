@@ -45,8 +45,8 @@ task :setup => :environment do
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/log"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/log"]
 
-  queue! %[mkdir -p "#{deploy_to}/#{shared_path}/files/download'"]
-  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/files/download'"]
+  queue! %[mkdir -p "#{deploy_to}/#{shared_path}/files/download"]
+  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/files/download"]
 
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/config"]

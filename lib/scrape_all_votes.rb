@@ -24,7 +24,13 @@ class GetAllVotes
           puts ">>>>  File not found, Downloading...."
           File.write(file_name, open(URI.encode(file_path)).read)
        end
-       file_names << file_name
+       file_ext = File.extname(file_path)
+       p file_ext
+       if  file_ext == ".rtf"
+         file_names << file_name
+       elsif file_ext == ".rar"
+         file_name
+       end
        p file_name
        p file_path
        file_names.each do |file_name|

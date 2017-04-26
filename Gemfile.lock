@@ -117,6 +117,7 @@ DEPENDENCIES
   mina
   nokogiri
   pg
+  rake
   sinatra
   sinatra-contrib
   yomu

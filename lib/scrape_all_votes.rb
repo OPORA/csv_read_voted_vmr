@@ -15,11 +15,12 @@ class GetAllVotes
        next if colums_table[2].nil?
        next if colums_table[2].css('a')[0].nil?
        number = colums_table[0].text.strip
-       # name = colums_table[1].text.strip
+       name = colums_table[1].text.strip
        doc = colums_table[2].css('a')[0][:href]
+       result = colums_table[2].text.strip
        file_path = "https://www.lvivrada.gov.ua#{doc}"
        file_names = []
-       file_name = "../files/download/#{Base32.encode(file_path)}"
+       file_name = "#{File.dirname(__FILE__)}/../files/download/#{Base32.encode(file_path)}"
        if (!File.exists?(file_name) || File.zero?(file_name))
           puts ">>>>  File not found, Downloading...."
           File.write(file_name, open(URI.encode(file_path)).read)
@@ -35,9 +36,9 @@ class GetAllVotes
        p file_path
        file_names.each do |file_name|
          vote = ReadFile.new.rtf(file_name)
-         event = VoteEvent.first(name: vote[:name], date_vote: vote[:datetime], number: number, date_caden: date, rada_id: 1)
+         event = VoteEvent.first(name: name, date_vote: vote[:datetime], number: number, date_caden: date, rada_id: 1, option: result)
          if event.nil?
-           events = VoteEvent.new(name: vote[:name], date_vote: vote[:datetime], number: number, date_caden: date, rada_id: 1)
+           events = VoteEvent.new(name: name, date_vote: vote[:datetime], number: number, date_caden: date, rada_id: 1, option: result)
            events.date_created = Date.today
            events.save
          else

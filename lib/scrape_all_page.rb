@@ -41,4 +41,3 @@ class GetPages
     GetAllVotes.votes(page_votes_day[:url], page_votes_day[:date])
   end
 end
-GetPages.new.get_votes('2017-04-06')

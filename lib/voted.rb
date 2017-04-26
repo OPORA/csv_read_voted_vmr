@@ -10,7 +10,7 @@ class VoteEvent
   property :date_caden,   Date
   property :date_vote,    DateTime
   property :date_created, Date
-
+  property :option,       String
   has n, :votes
 end
 

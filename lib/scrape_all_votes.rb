@@ -9,12 +9,12 @@ class GetAllVotes
   def self.votes(url, date)
      p url
      page = GetPage.page(url)
-     page.css('.itemFullText table tr').each do |tr|
+     page.css('.itemFullText table tr').each_with_index do |tr, index|
 
        colums_table = tr.css('td')
        next if colums_table[2].nil?
        next if colums_table[2].css('a')[0].nil?
-       number = colums_table[0].text.strip
+       number = index + 1
        name = colums_table[1].text.strip
        doc = colums_table[2].css('a')[0][:href]
        result = colums_table[2].text.strip
@@ -60,7 +60,8 @@ class GetAllVotes
         "НЕ ГОЛОСУВАВ":  "not_voted",
         відсутній: "absent",
         ПРОТИ:  "against",
-        ЗА: "aye"
+        ЗА: "aye",
+        УТРИМАВСЯ: "abstain"
     }
     hash[:"#{result}"]
   end

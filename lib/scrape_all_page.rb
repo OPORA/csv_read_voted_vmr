@@ -37,7 +37,7 @@ class GetPages
     p @all_page
   end
   def get_votes(date)
-    page_votes_day = @all_page.find{date}
+    page_votes_day = @all_page.find{|k,v| k[:date]== Date.parse(date, '%Y-%m-%d')}
     GetAllVotes.votes(page_votes_day[:url], page_votes_day[:date])
   end
 end

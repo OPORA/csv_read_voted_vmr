@@ -17,11 +17,11 @@ class GetAllVotes
        number = index + 1
        name = colums_table[1].text.strip
        if colums_table[2].css('a')[0].nil?
+        next if colums_table[7].nil?
         next if colums_table[7].css('a')[0].nil?
         doc = colums_table[7].css('a')[0][:href]
         result = colums_table[3].text.strip
        else
-         next if colums_table[2].css('a')[0].nil?
          doc = colums_table[2].css('a')[0][:href]
          result = colums_table[2].text.strip
        end

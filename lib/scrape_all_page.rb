@@ -34,10 +34,29 @@ class GetPages
     return hash
   end
   def get_all_votes
-    p @all_page
+    @all_page.each do |p|
+      p p[:date]
+      GetAllVotes.votes(p[:url], p[:date])
+    end
   end
   def get_votes(date)
     page_votes_day = @all_page.find{|k,v| k[:date]== Date.parse(date, '%Y-%m-%d')}
     GetAllVotes.votes(page_votes_day[:url], page_votes_day[:date])
+  end
+  def get_filter_start_votes(date)
+    page_votes_days = @all_page.find_all{|k,v| k[:date] <= Date.parse(date, '%Y-%m-%d')}
+    p page_votes_days
+    page_votes_days.each do |p|
+      p p[:date]
+      GetAllVotes.votes(p[:url], p[:date])
+    end
+  end
+  def get_filter_votes(start_date, end_date)
+    page_votes_days = @all_page.find_all{|k,v| k[:date] <= Date.parse(start_date, '%Y-%m-%d') and k[:date] > Date.parse(end_date, '%Y-%m-%d')}
+    p page_votes_days
+    page_votes_days.each do |p|
+      p p[:date]
+      GetAllVotes.votes(p[:url], p[:date])
+    end
   end
 end

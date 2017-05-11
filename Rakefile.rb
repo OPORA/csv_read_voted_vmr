@@ -6,6 +6,11 @@ task :create_db do
 end
 desc 'Scrape voted'
 task :scrape_voted, [:start_date, :end_date] do |t, arg|
- #p arg[:start_date]
-  GetPages.new.get_votes('2017-04-06')
+ if arg[:start_date].nil?
+   GetPages.new.get_all_votes
+ elsif !arg[:end_date].nil?
+   GetPages.new.get_filter_votes(arg[:start_date], arg[:end_date])
+ else
+   GetPages.new.get_filter_start_votes(arg[:start_date])
+ end
 end

@@ -5,7 +5,7 @@ class VoteEvent
 
   property :id,           Serial    # An auto-increment integer key
   property :name,         Text
-  property :number,       Integer
+  property :number,       Text
   property :rada_id,      Integer
   property :date_caden,   Date
   property :date_vote,    DateTime

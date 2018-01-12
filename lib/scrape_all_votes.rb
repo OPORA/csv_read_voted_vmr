@@ -1,93 +1,78 @@
-require_relative 'get_page'
-require_relative 'read_file'
-require 'base32'
 require_relative 'voted'
-
 require_relative 'get_mps'
+require 'json'
 
 class GetAllVotes
-  def self.votes(url, date)
-     p url
-     page = GetPage.page(url)
-     page.css('.itemFullText table tr').each_with_index do |tr, index|
+   def initialize
+     @all_file = get_all_file()
+     $all_mp =  GetMp.new
+   end
+   def get_all_file
+     hash = []
+     Dir.glob("#{File.dirname(__FILE__)}/../files/*").each do |f|
 
-       colums_table = tr.css('td')
-       next if colums_table[2].nil?
-
-       number = index + 1
-       name = colums_table[1].text.strip
-       if colums_table[2].css('a')[0].nil?
-        next if colums_table[7].nil?
-        next if colums_table[7].css('a')[0].nil?
-        doc = colums_table[7].css('a')[0][:href]
-        result = colums_table[3].text.strip
-       else
-         doc = colums_table[2].css('a')[0][:href]
-         result = colums_table[2].text.strip
-       end
-       file_path = "https://www.lvivrada.gov.ua#{doc}"
-       p file_path
-       file_names = []
-       file_name = "#{File.dirname(__FILE__)}/../files/download/#{Base32.encode(file_path)}"
-       if (!File.exists?(file_name) || File.zero?(file_name))
-          uri = URI.encode(file_path.gsub(/%20/,' '))
-          p uri
-          res = Net::HTTP.get_response(URI.parse(uri))
-          if res.code == "404" and uri[/\.rtf/]
-            uri = uri[/.+?\.rtf/]
-            res = Net::HTTP.get_response(URI.parse(uri))
-            if res.code == "404"
-              uri = file_path
-            end
-          end
-          next if res.code == "404"
-          puts ">>>>  File not found, Downloading...."
-          File.write(file_name, open(uri).read)
-       end
-       p "end load"
-       file_ext = File.extname(file_path)
-       if file_ext == ".rar"
-         `unrar e #{file_name} #{file_name}_D/ -y`
-         files = `cd #{file_name}_D && ls`
-         files.split(/\n/).each do |rtf|
-           file_names << "#{file_name}_D/#{rtf}"
-         end
-       else
-         file_names << file_name
-       end
-       file_names.each_with_index do |file_name, i|
-         if i > 0
-           number = "#{number}-#{i + 1}"
-         end
-         ReadFile.new.rtf(file_name).each_with_index do |vot, ind|
-           if ind > 0
-             number = "#{number}-#{ind + 1}"
-           end
-           event = VoteEvent.first(name: name, date_vote: vot[:datetime], number: number, date_caden: date, rada_id: 1, option: result)
-           if event.nil?
-             events = VoteEvent.new(name: name, date_vote: vot[:datetime], number: number, date_caden: date, rada_id: 1, option: result)
-             events.date_created = Date.today
-             events.save
-           else
-             events = event
-             events.votes.destroy!
-           end
-           vot[:voteds].each do |v|
-             next if v.empty?
-             vote = events.votes.new
-             vote.voter_id = $all_mp.serch_mp(v.first)
-             vote.result = short_voted_result(v.last)
-             vote.save
-           end
-         end
-       end
+       hash << { path: f, date:  f[/\d\d.\d\d.\d\d/] }
      end
-     p date
+     return hash
+   end
+  def get_all_votes
+    @all_file.each do |f|
+      read_file(f[:path] )
+    end
   end
-  def self.short_voted_result(result)
+  def read_file(file)
+
+    json = File.open(file)
+    file = open(json).read
+
+    my_hash = JSON.parse(file)
+
+    date_caden = Date.parse(my_hash["sessionDate"],'%d.%m.%Y')
+    rada_id = 6
+
+    my_hash["voting"].each_with_index  do |v, i|
+      next if v["namedVoting"].empty?
+      name = v["voteName"].strip
+      number = i + 1
+      date_vote =  v["voteTimestamp"]
+      event = VoteEvent.first(name: name, date_vote: date_vote, number: number, date_caden: date_caden, rada_id: rada_id)
+      if event.nil?
+        events = VoteEvent.new(name: name, date_vote: date_vote, number: number, date_caden: date_caden, rada_id: rada_id)
+        events.date_created = Date.today
+        events.save
+      else
+        events = event
+        events.votes.destroy!
+      end
+      size = v["namedVoting"].size/2.to_f
+      p size
+      ages =[]
+      v["namedVoting"].each do |r|
+        v = r.to_a[0]
+        next if v.first == "Бичковяк Олена Вікторівна" or  v.first == "Кучма Тарас Ярославович" or  v.first == "Городинський Михайло Мар\"янович" or v.first == "Городинський Михайло Мар`янович"
+        vote = events.votes.new
+        vote.voter_id = $all_mp.serch_mp(v.first)
+        vote.result =  short_voted_result(v.last)
+        vote.save
+
+        if vote.result == "aye"
+          ages << 1
+        end
+      end
+      ages_sum = ages.size
+      if ages_sum > size
+        result = "Прийнято"
+      else
+        result = "Не прийнято"
+      end
+      events.update(option: result)
+    end
+
+  end
+  def short_voted_result(result)
     hash = {
         "НЕ ГОЛОСУВАВ":  "not_voted",
-        відсутній: "absent",
+        ВІДСУТНІЙ: "absent",
         ПРОТИ:  "against",
         ЗА: "aye",
         УТРИМАВСЯ: "abstain"

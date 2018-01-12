@@ -11,8 +11,8 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :domain, 'ruby.oporaua.org'
-set :deploy_to, '/home/scraper_lviv_voted'
-set :repository, 'git@github.com:OPORA/scraper_lviv_voted.git'
+set :deploy_to, '/home/scraper_drohobych_voted'
+set :repository, 'git@github.com:OPORA/json_drohobych_voted.git'
 set :branch, 'master'
 
 # For system-wide RVM install.
@@ -24,7 +24,7 @@ set :shared_paths, ['config/db.yml', 'files/download', 'log']
 
 # Optional settings:
    set :user, 'root'    # Username in the server to SSH to.
-#   set :port, '30000'     # SSH port number.
+   set :port, '1122'     # SSH port number.
 #   set :forward_agent, true     # SSH forward_agent.
 
 # This task is the environment that is loaded for most commands, such as

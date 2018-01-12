@@ -2,7 +2,7 @@ require 'open-uri'
 require 'json'
 class GetMp
   def initialize
-    @data_hash = JSON.load(open('http://lvivmp.oporaua.org/'))
+    @data_hash = JSON.load(open('http://drohobychmp.oporaua.org/'))
   end
   def serch_mp(full_name)
     p full_name

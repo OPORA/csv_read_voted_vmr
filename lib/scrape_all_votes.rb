@@ -19,7 +19,7 @@ class GetAllVotes
   def get_all_votes
     @all_file.each do |f|
       read_file(f[:path] )
-      #FileUtils.mv(f[:path], "#{File.dirname(__FILE__)}/../files_ap/")
+      FileUtils.mv(f[:path], "#{File.dirname(__FILE__)}/../files_ap/")
     end
   end
   def read_file(file)

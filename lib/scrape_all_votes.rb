@@ -75,10 +75,12 @@ class GetAllVotes
     hash = {
         "НЕ ГОЛОСУВАВ":  "not_voted",
         ВІДСУТНІЙ: "absent",
+        ВІДСУТНЯ: "absent",
         ПРОТИ:  "against",
         ЗА: "aye",
-        УТРИМАВСЯ: "abstain"
+        УТРИМАВСЯ: "abstain",
+        УТРИМАЛАСЬ: "abstain"
     }
-    hash[:"#{result}"]
+    hash[:"#{result.upcase}"]
   end
 end

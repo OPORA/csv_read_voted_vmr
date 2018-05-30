@@ -25,11 +25,13 @@ class Vote
 
 end
 
-class Update
+class UpdatePar
   include DataMapper::Resource
+
   property :id,           Serial    # An auto-increment integer key
-  property :url,          String
-  property :last_modified, String
+  property :url,          Text
+  property :last_modified, Text
+
 end
 
 DataMapper.finalize

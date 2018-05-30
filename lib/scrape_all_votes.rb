@@ -14,7 +14,6 @@ class GetAllVotes
      json = open(uri).read
      hash_json = JSON.parse(json)
      hash_json["result"][0]["resources"].each do |f|
-       next if f["url"] == "https://opendata.drohobych-rada.gov.ua/sites/default/files/deputies.json"
        p f["url"]
        hash << { path: f["url"], last_modified: f["last_modified"]}
      end
@@ -22,10 +21,10 @@ class GetAllVotes
    end
   def get_all_votes
     @all_file.each do |f|
-      update = Update.first(url: f[:path], last_modified: f[:last_modified])
+      update = UpdatePar.first(url: f[:path], last_modified: f[:last_modified])
       if update.nil?
         read_file(f[:path] )
-        Update.create(url: f[:path], last_modified: f[:last_modified])
+        UpdatePar.create!(url: f[:path], last_modified: f[:last_modified])
       end
     end
   end
@@ -35,7 +34,7 @@ class GetAllVotes
 
     my_hash = JSON.parse(json)
     p my_hash["sessionDate"]
-    date_caden = Date.strptime(my_hash["sessionDate"],'%d.%m.%y')
+    date_caden = Date.strptime(my_hash["sessionDate"].strip,'%d.%m.%y')
     rada_id = 6
 
     my_hash["voting"].each_with_index  do |v, i|
@@ -43,7 +42,7 @@ class GetAllVotes
       name = v["voteName"].strip
       number = i + 1
        p v["voteTimestamp"]
-      date_vote =  DateTime.strptime(v["voteTimestamp"], '%d.%m.%y %H:%M:%S')
+      date_vote =  DateTime.strptime(v["voteTimestamp"].strip, '%d.%m.%y %H:%M:%S')
       event = VoteEvent.first(name: name, date_vote: date_vote, number: number, date_caden: date_caden, rada_id: rada_id)
       if event.nil?
         events = VoteEvent.new(name: name, date_vote: date_vote, number: number, date_caden: date_caden, rada_id: rada_id)

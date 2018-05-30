@@ -10,24 +10,30 @@ class GetAllVotes
    end
    def get_all_file
      hash = []
-     Dir.glob("#{File.dirname(__FILE__)}/../files/*").each do |f|
-
-       hash << { path: f, date:  f[/\d\d.\d\d.\d\d/] }
+     uri = "https://opendata.drohobych-rada.gov.ua/api/3/action/package_show?id=d0580cfd-39ee-41d5-ae59-b25dd9c64439"
+     json = open(uri).read
+     hash_json = JSON.parse(json)
+     hash_json["result"][0]["resources"].each do |f|
+       next if f["url"] == "https://opendata.drohobych-rada.gov.ua/sites/default/files/deputies.json"
+       p f["url"]
+       hash << { path: f["url"], last_modified: f["last_modified"]}
      end
      return hash
    end
   def get_all_votes
     @all_file.each do |f|
-      read_file(f[:path] )
-      FileUtils.mv(f[:path], "#{File.dirname(__FILE__)}/../files_ap/")
+      update = Update.first(url: f[:path], last_modified: f[:last_modified])
+      if update.nil?
+        read_file(f[:path] )
+        Update.create(url: f[:path], last_modified: f[:last_modified])
+      end
     end
   end
   def read_file(file)
 
-    json = File.open(file)
-    file = open(json).read
+    json = open(file).read
 
-    my_hash = JSON.parse(file)
+    my_hash = JSON.parse(json)
     p my_hash["sessionDate"]
     date_caden = Date.strptime(my_hash["sessionDate"],'%d.%m.%y')
     rada_id = 6

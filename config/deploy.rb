@@ -11,8 +11,8 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :domain, 'ruby.oporaua.org'
-set :deploy_to, '/home/scraper_drohobych_voted'
-set :repository, 'git@github.com:OPORA/json_drohobych_voted.git'
+set :deploy_to, '/home/csv_vin_voted'
+set :repository, 'git@github.com:OPORA/csv_read_voted_vmr.git'
 set :branch, 'master'
 
 # For system-wide RVM install.
@@ -20,7 +20,7 @@ set :rvm_path, '/usr/local/rvm/scripts/rvm'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/db.yml', 'files/download', 'log']
+set :shared_paths, ['config/db.yml', 'log']
 
 # Optional settings:
    set :user, 'root'    # Username in the server to SSH to.
@@ -44,9 +44,6 @@ end
 task :setup => :environment do
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/log"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/log"]
-
-  queue! %[mkdir -p "#{deploy_to}/#{shared_path}/files/download"]
-  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/files/download"]
 
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/config"]

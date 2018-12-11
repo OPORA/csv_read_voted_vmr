@@ -108,6 +108,7 @@ DEPENDENCIES
   config
   data_mapper
   dm-postgres-adapter
+  do_postgres
   mina
   pg
   rake
@@ -115,4 +116,4 @@ DEPENDENCIES
   sinatra-contrib
 
 BUNDLED WITH
-   1.16.0
+   1.16.2
